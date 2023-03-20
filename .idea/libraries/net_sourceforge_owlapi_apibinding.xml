@@ -1,0 +1,64 @@
+<component name="libraryTable">
+  <library name="net.sourceforge.owlapi.apibinding" type="repository">
+    <properties maven-id="net.sourceforge.owlapi:owlapi-apibinding:5.1.20" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-apibinding-5.1.20.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-api-5.1.20.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xz-1.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-rdf-api-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.inject-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-impl-5.1.20.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-parsers-5.1.20.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-oboformat-5.1.20.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-tools-5.1.20.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-rio-5.1.20.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-model-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-util-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-model-api-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-model-vocabulary-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-api-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-languages-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-datatypes-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-binary-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-n3-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-nquads-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-ntriples-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-rdfjson-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-core-2.11.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-rdfxml-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-trix-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-turtle-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-hdt-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-trig-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-jsonld-3.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-4.5.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-4.4.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-cache-4.5.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsonld-java-0.13.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-databind-2.10.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-annotations-2.10.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-osgi-4.5.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-codec-1.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpmime-4.5.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/fluent-hc-4.5.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-osgi-4.4.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-nio-4.4.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcl-over-slf4j-1.7.29.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/hppcrt-0.7.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/caffeine-2.8.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/checker-qual-3.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/error_prone_annotations-2.3.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-30.1.1-jre.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/failureaccess-1.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/j2objc-annotations-1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsr305-3.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.30.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-io-2.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ideaLibSources/owlapi-api-5.1.20-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

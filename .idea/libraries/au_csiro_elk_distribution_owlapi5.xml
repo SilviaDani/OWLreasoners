@@ -1,0 +1,52 @@
+<component name="libraryTable">
+  <library name="au.csiro.elk.distribution.owlapi5" type="repository">
+    <properties maven-id="au.csiro:elk-distribution-owlapi5:LATEST" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/elk-distribution-owlapi5-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owlapi5-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owlapi4-0.5.0-test-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-18.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owl-model-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owl-implementation-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-reasoner-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-proofs-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-common-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-concurrent-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-hashing-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-io-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-collections-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-logging-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.25.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/puli-0.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-proof-0.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owlapi4-0.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-distribution-owlapi4-0.5.0-test-sources.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/elk-owlapi4-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-distribution-owlapi4-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-distribution-owlapi5-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owlapi5-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owlapi4-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owlapi4-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-18.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owl-model-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owl-implementation-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-reasoner-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-proofs-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-common-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-concurrent-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-hashing-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-io-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-collections-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-util-logging-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.25-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/puli-0.1.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-proof-0.1.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-distribution-owlapi4-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-owlapi4-0.5.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elk-distribution-owlapi4-0.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

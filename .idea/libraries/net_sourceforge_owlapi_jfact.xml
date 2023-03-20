@@ -1,0 +1,63 @@
+<component name="libraryTable">
+  <library name="net.sourceforge.owlapi.jfact" type="repository">
+    <properties maven-id="net.sourceforge.owlapi:jfact:5.0.3" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jfact-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-distribution-5.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-compatibility-5.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-apibinding-5.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-api-5.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-impl-5.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-parsers-5.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-oboformat-5.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-tools-5.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/owlapi-rio-5.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-core-2.8.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-databind-2.8.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jackson-annotations-2.8.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-rdf-api-0.3.0-incubating.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xz-1.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.7.22.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcl-over-slf4j-1.7.22.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-model-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-api-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-languages-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-datatypes-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-binary-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-n3-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-nquads-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-ntriples-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-rdfjson-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-jsonld-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-rdfxml-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-trix-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-turtle-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-rio-trig-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/rdf4j-util-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsonld-java-0.9.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-osgi-4.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-4.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-codec-1.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpmime-4.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-cache-4.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/fluent-hc-4.5.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-osgi-4.4.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-4.4.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-nio-4.4.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/caffeine-2.3.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-20.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guice-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.inject-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/aopalliance-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guice-assistedinject-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guice-multibindings-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsr305-3.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-io-2.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/trove4j-3.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/joda-time-2.9.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/RoaringBitmap-0.6.32.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

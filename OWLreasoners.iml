@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="net.sourceforge.owlapi.api" level="project" />
+    <orderEntry type="library" name="net.sourceforge.owlapi.apibinding" level="project" />
+    <orderEntry type="library" name="github.galigator.openllet.owlapi" level="project" />
+    <orderEntry type="library" name="net.sourceforge.owlapi.jfact" level="project" />
+    <orderEntry type="library" name="net.sourceforge.owlapi.semanticweb.hermit" level="project" />
+    <orderEntry type="library" name="au.csiro.elk.distribution.owlapi5" level="project" />
+    <orderEntry type="library" name="opencsv" level="project" />
+    <orderEntry type="library" name="github.sh0nk.matplotlib4j" level="project" />
+    <orderEntry type="library" name="jfree.jfreechart" level="project" />
+  </component>
+</module>
