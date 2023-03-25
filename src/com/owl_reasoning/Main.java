@@ -75,24 +75,20 @@ public class Main{
             AddAxiom addAxiom = new AddAxiom(o, axiom);
             ontologyManager.applyChange(addAxiom);
         }
-        // creating equivalent classes
+        // creating equivalent and disjoint classes
         for (int i=0; i<Math.floor(n/10); i++) {
             int A = rand.nextInt(n);
             int B = rand.nextInt(n);
-            int C = rand.nextInt(n);
-            while (B == A || B == C) {
+            while (B == A) {
                 B = rand.nextInt(n);
-            }
-            while (C == A || C == B) {
-                C = rand.nextInt(n);
             }
             OWLClass clsA = df.getOWLClass("#Class" + A);
             OWLClass clsB = df.getOWLClass("#Class" + B);
-            OWLClass clsC = df.getOWLClass("#Class" + C);
-            OWLAxiom axiom = df.getOWLEquivalentClassesAxiom(clsA, clsB, clsC);
+            OWLAxiom axiom = df.getOWLEquivalentClassesAxiom(clsA, clsB);
             AddAxiom addAxiom = new AddAxiom(o, axiom);
             ontologyManager.applyChange(addAxiom);
         }
+
         // creating individuals
         for (int i=0; i<m; i++){
             int A = i%n;
@@ -117,6 +113,22 @@ public class Main{
             AddAxiom addAxiom = new AddAxiom(o, axiom);
             ontologyManager.applyChange(addAxiom);
         }
+
+        /*
+        for (int i=0; i<Math.floor(m/5); i++) {
+            OWLDataProperty dp = df.getOWLDataProperty(IRI.create("#Property " + i));
+            OWLAxiom declare = df.getOWLDeclarationAxiom(dp);
+            AddAxiom addAxiom = new AddAxiom(o, declare);
+            ontologyManager.applyChange(addAxiom);
+        }
+        for (int i=0; i<m; i++) {
+            int A = rand.nextInt((int)Math.floor(m/5));
+            OWLAxiom axiom = df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty("#Property " + A), df.getOWLNamedIndividual("#Individual" + m), 1);
+            AddAxiom addAxiom = new AddAxiom(o, axiom);
+            ontologyManager.applyChange(addAxiom);
+        }
+
+         */
         return o;
     }
 
@@ -154,7 +166,7 @@ public class Main{
         }
         long toc = System.currentTimeMillis();
         long executionTime = toc - tic;
-        return new double[]{executionTime, getHeapMemoryUsage(), getProcessCpuLoad()};
+        return new double[]{executionTime, 100*Runtime.getRuntime().totalMemory()/Runtime.getRuntime().maxMemory(), getProcessCpuLoad()};
     }
 
     public static double[] classify(OWLReasoner reasoner){
@@ -162,7 +174,7 @@ public class Main{
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
         long toc = System.currentTimeMillis();
         long executionTime = toc - tic;
-        return new double[]{executionTime, getHeapMemoryUsage(), getProcessCpuLoad()};
+        return new double[]{executionTime, 100*Runtime.getRuntime().totalMemory()/Runtime.getRuntime().maxMemory(), getProcessCpuLoad()};
     }
 
     public static double[] isConsistent(OWLReasoner reasoner){
@@ -170,7 +182,7 @@ public class Main{
         reasoner.isConsistent();
         long toc = System.nanoTime();
         long executionTime = toc - tic;
-        return new double[]{executionTime/1000, getHeapMemoryUsage(), getProcessCpuLoad()};
+        return new double[]{executionTime/1000, 100*Runtime.getRuntime().totalMemory()/Runtime.getRuntime().maxMemory(), getProcessCpuLoad()};
     }
 
     public static double[] instanceChecking(OWLReasoner reasoner, OWLAxiom axiom){
@@ -178,7 +190,7 @@ public class Main{
         reasoner.isEntailed(axiom);
         long toc = System.currentTimeMillis();
         long executionTime = toc - tic;
-        return new double[]{executionTime, getHeapMemoryUsage(), getProcessCpuLoad()};
+        return new double[]{executionTime, 100*Runtime.getRuntime().totalMemory()/Runtime.getRuntime().maxMemory(), getProcessCpuLoad()};
     }
 
     private static JFreeChart createChart(final XYDataset dataset, String title, String yAxis) {
@@ -228,7 +240,10 @@ public class Main{
         writer.writeNext(data_i);
     }
 
-    public static double[] readData(BufferedReader br, int iterations, int reps, String type, String r_type) throws IOException, ParseException {
+    public static double[] readData(File file, int iterations, int reps, String type, String r_type) throws IOException{
+        System.out.println(iterations + ", " + reps );
+        FileReader fr = new FileReader(file);
+        BufferedReader br = new BufferedReader(fr);
         double[] d = new double[]{0, 0, 0};
         int step = -3;
         switch (type){
@@ -250,6 +265,9 @@ public class Main{
             case "Classify TBox":
                 step = 5;
                 break;
+            default:
+                System.out.println("ERROR 1");
+                break;
         }
         int reasoner = -3;
         switch (r_type){
@@ -265,6 +283,9 @@ public class Main{
             case "ELK":
                 reasoner = 4;
                 break;
+            default:
+                System.out.println("ERROR 2");
+                break;
         }
         String line = "";
         String[] tempArr;
@@ -272,17 +293,15 @@ public class Main{
             line = br.readLine();
         }
         int iterator = iterations*reps*4*6;
-        while (iterator<(iterations+1)*reps*4*6){
+        if (iterator<(iterations+1)*reps*4*6){
             for (int i = 0; i<step+reasoner; i++){
                 line = br.readLine();
                 iterator++;
             }
-            System.out.println(line);
             if(line != null) {
                 tempArr = line.split(",");
                 int j = 0;
                 for (String tempStr : tempArr) {
-                    System.out.println(tempStr +"    " + iterator);
                     String result = tempStr.replaceAll("\"", "");
                     double value = Double.parseDouble(result);
                     d[j] += value;
@@ -290,16 +309,19 @@ public class Main{
                 }
             }
             line = br.readLine();
+            iterator++;
             if (line != null){
-                for (int i = 0; i<24-step-reasoner-1; i++){
+                for (int i = 0; i<24-step-reasoner; i++){
+                    line = br.readLine();
                     iterator++;
                 }
-                iterator--;
             }
         }
         for (int l=0; l<d.length; l++){
             d[l] = d[l]/reps;
         }
+        br.close();
+        fr.close();
         return d;
     }
 
@@ -319,11 +341,11 @@ public class Main{
 
             ontologyManager = OWLManager.createOWLOntologyManager();
             df = ontologyManager.getOWLDataFactory();
-            int iterations = 1;
+            int iterations = 3;
             int step = 10;
-            int reps = 1;
+            int reps = 3;
 
-            int m = 10;
+            int m = 40;
             double[] consistent;
             double[] satisfiable;
             double[] classified;
@@ -332,7 +354,7 @@ public class Main{
             CSVWriter writer = new CSVWriter(outputfile);
             for (int rep=0; rep<reps; rep++){
                 int n = 0;
-                /*
+
                 for (int k = step; k < step*iterations+1; k += step){
                     for (int ont=0; ont<2; ont++) {
                         double d = 0;
@@ -359,19 +381,17 @@ public class Main{
                     }
                 }
 
-                     */
+
 
                 for (int i=0; i<iterations; i++){
                     n += step;
                     ontology = generateOntology(n, m);
                     //System.out.println("getAxioms() " + ontology.getAxiomCount());
-                    OWLOntology[] boxes = new OWLOntology[3];
+                    OWLOntology[] boxes = new OWLOntology[2];
                     OWLOntology[] ATboxes = getBoxes(ontology);
                     boxes[0] = ontology;
                     boxes[1] = ATboxes[1]; //TBOX
                     //System.out.println("getAxioms() tbox " + boxes[1].getAxiomCount());
-                    boxes[2] = ATboxes[0]; //ABOX
-                    //System.out.println("getAxioms() abox " + boxes[2].getAxiomCount());
                     for (int ont=0; ont<2; ont++) {
                         reasonerH = reasonerFactoryHermit.createReasoner(boxes[ont]);
                         reasonerP = reasonerFactoryPellet.createReasoner(boxes[ont]);
@@ -381,79 +401,79 @@ public class Main{
                         if (ont != 2) {
                             satisfiable = isSatisfiable(reasonerH, boxes[ont]);
                             writeData(writer, satisfiable);
-//                            for (int r=0; r<satisfiable.length; r++){
-//                                satisfiable[r] += times.get(ont + " HermiT satisfiable " + n)[r];
-//                            }
-//                            times.put(ont + " HermiT satisfiable " + n, satisfiable);
+                            for (int r=0; r<satisfiable.length; r++){
+                                satisfiable[r] += times.get(ont + " HermiT satisfiable " + n)[r];
+                            }
+                            times.put(ont + " HermiT satisfiable " + n, satisfiable);
                             satisfiable = isSatisfiable(reasonerP, boxes[ont]);
                             writeData(writer, satisfiable);
-//                            for (int r=0; r<satisfiable.length; r++){
-//                                satisfiable[r] += times.get(ont + " Pellet satisfiable " + n)[r];
-//                            }
-//                            times.put(ont + " Pellet satisfiable " + n, satisfiable);
+                            for (int r=0; r<satisfiable.length; r++){
+                                satisfiable[r] += times.get(ont + " Pellet satisfiable " + n)[r];
+                            }
+                            times.put(ont + " Pellet satisfiable " + n, satisfiable);
                             satisfiable = isSatisfiable(reasonerJ, boxes[ont]);
                             writeData(writer, satisfiable);
-//                            for (int r=0; r<satisfiable.length; r++){
-//                                satisfiable[r] += times.get(ont + " JFact satisfiable " + n)[r];
-//                            }
-//                            times.put(ont + " JFact satisfiable " + n, satisfiable);
+                            for (int r=0; r<satisfiable.length; r++){
+                                satisfiable[r] += times.get(ont + " JFact satisfiable " + n)[r];
+                            }
+                            times.put(ont + " JFact satisfiable " + n, satisfiable);
                             satisfiable = isSatisfiable(reasonerE, boxes[ont]);
                             writeData(writer, satisfiable);
-//                            for (int r=0; r<satisfiable.length; r++){
-//                                satisfiable[r] += times.get(ont + " ELK satisfiable " + n)[r];
-//                            }
-//                            times.put(ont + " ELK satisfiable " + n, satisfiable);
+                            for (int r=0; r<satisfiable.length; r++){
+                                satisfiable[r] += times.get(ont + " ELK satisfiable " + n)[r];
+                            }
+                            times.put(ont + " ELK satisfiable " + n, satisfiable);
 
                             classified = classify(reasonerH);
                             writeData(writer, classified);
-//                            for (int r=0; r<classified.length; r++){
-//                                classified[r] += times.get(ont + " HermiT classify " + n)[r];
-//                            }
-//                            times.put(ont + " HermiT classify " + n, classified);
+                            for (int r=0; r<classified.length; r++){
+                                classified[r] += times.get(ont + " HermiT classify " + n)[r];
+                            }
+                            times.put(ont + " HermiT classify " + n, classified);
                             classified = classify(reasonerP);
                             writeData(writer, classified);
-//                            for (int r=0; r<classified.length; r++){
-//                                classified[r] += times.get(ont + " Pellet classify " + n)[r];
-//                            }
-//                            times.put(ont + " Pellet classify " + n, classified);
+                            for (int r=0; r<classified.length; r++){
+                                classified[r] += times.get(ont + " Pellet classify " + n)[r];
+                            }
+                            times.put(ont + " Pellet classify " + n, classified);
                             classified = classify(reasonerJ);
                             writeData(writer, classified);
-//                            for (int r=0; r<classified.length; r++){
-//                                classified[r] += times.get(ont + " JFact classify " + n)[r];
-//                            }
-//                            times.put(ont + " JFact classify " + n, classified);
+                            for (int r=0; r<classified.length; r++){
+                                classified[r] += times.get(ont + " JFact classify " + n)[r];
+                            }
+                            times.put(ont + " JFact classify " + n, classified);
                             classified = classify(reasonerE);
                             writeData(writer, classified);
-//                            for (int r=0; r<classified.length; r++){
-//                                classified[r] += times.get(ont + " ELK classify " + n)[r];
-//                            }
-//                            times.put(ont + " ELK classify " + n, classified);
+                            for (int r=0; r<classified.length; r++){
+                                classified[r] += times.get(ont + " ELK classify " + n)[r];
+                            }
+                            times.put(ont + " ELK classify " + n, classified);
                         }
                         if (ont == 0){
                             consistent = isConsistent(reasonerH);
                             writeData(writer, consistent);
-//                            for (int r=0; r<consistent.length; r++){
-//                                consistent[r] += times.get(ont + " HermiT consistency " + n)[r];
-//                            }
-//                            times.put(ont + " HermiT consistency " + n, consistent);
+                            for (int r=0; r<consistent.length; r++){
+                                consistent[r] += times.get(ont + " HermiT consistency " + n)[r];
+                            }
+                            times.put(ont + " HermiT consistency " + n, consistent);
                             consistent = isConsistent(reasonerP);
                             writeData(writer, consistent);
-//                            for (int r=0; r<consistent.length; r++){
-//                                consistent[r] += times.get(ont + " Pellet consistency " + n)[r];
-//                            }
-//                            times.put(ont + " Pellet consistency " + n, consistent);
+                            for (int r=0; r<consistent.length; r++){
+                                consistent[r] += times.get(ont + " Pellet consistency " + n)[r];
+                            }
+                            times.put(ont + " Pellet consistency " + n, consistent);
                             consistent = isConsistent(reasonerJ);
                             writeData(writer, consistent);
-//                            for (int r=0; r<consistent.length; r++){
-//                                consistent[r] += times.get(ont + " JFact consistency " + n)[r];
-//                            }
-//                            times.put(ont + " JFact consistency " + n, consistent);
+                            for (int r=0; r<consistent.length; r++){
+                                consistent[r] += times.get(ont + " JFact consistency " + n)[r];
+                            }
+                            times.put(ont + " JFact consistency " + n, consistent);
                             consistent = isConsistent(reasonerE);
                             writeData(writer, consistent);
-//                            for (int r=0; r<consistent.length; r++){
-//                                consistent[r] += times.get(ont + " ELK consistency " + n)[r];
-//                            }
-//                            times.put(ont + " ELK consistency " + n, consistent);
+                            for (int r=0; r<consistent.length; r++){
+                                consistent[r] += times.get(ont + " ELK consistency " + n)[r];
+                            }
+                            times.put(ont + " ELK consistency " + n, consistent);
                             Random rnd = new Random();
                             rnd.setSeed(rep);
                             int A = rnd.nextInt(n);
@@ -463,35 +483,33 @@ public class Main{
                             OWLAxiom axiom =  df.getOWLClassAssertionAxiom(cls, individual);
                             instanceChecked = instanceChecking(reasonerH, axiom);
                             writeData(writer, instanceChecked);
-//                            for (int r=0; r<instanceChecked.length; r++){
-//                                instanceChecked[r] += times.get(ont + " HermiT instance checking " + n)[r];
-//                            }
-//                            times.put(ont + " HermiT instance checking " + n, instanceChecked);
+                            for (int r=0; r<instanceChecked.length; r++){
+                                instanceChecked[r] += times.get(ont + " HermiT instance checking " + n)[r];
+                            }
+                            times.put(ont + " HermiT instance checking " + n, instanceChecked);
                             instanceChecked = instanceChecking(reasonerP, axiom);
                             writeData(writer, instanceChecked);
-//                            for (int r=0; r<instanceChecked.length; r++){
-//                                instanceChecked[r] += times.get(ont + " Pellet instance checking " + n)[r];
-//                            }
-//                            times.put(ont + " Pellet instance checking " + n, instanceChecked);
+                            for (int r=0; r<instanceChecked.length; r++){
+                                instanceChecked[r] += times.get(ont + " Pellet instance checking " + n)[r];
+                            }
+                            times.put(ont + " Pellet instance checking " + n, instanceChecked);
                             instanceChecked = instanceChecking(reasonerH, axiom);
                             writeData(writer, instanceChecked);
-//                            for (int r=0; r<instanceChecked.length; r++){
-//                                instanceChecked[r] += times.get(ont + " JFact instance checking " + n)[r];
-//                            }
-//                            times.put(ont + " JFact instance checking " + n, instanceChecked);
+                            for (int r=0; r<instanceChecked.length; r++){
+                                instanceChecked[r] += times.get(ont + " JFact instance checking " + n)[r];
+                            }
+                            times.put(ont + " JFact instance checking " + n, instanceChecked);
                             instanceChecked = instanceChecking(reasonerH, axiom);
                             writeData(writer, instanceChecked);
-//                            for (int r=0; r<instanceChecked.length; r++){
-//                                instanceChecked[r] += times.get(ont + " ELK instance checking " + n)[r];
-//                            }
-//                            times.put(ont + " ELK instance checking " + n, instanceChecked);
+                            for (int r=0; r<instanceChecked.length; r++){
+                                instanceChecked[r] += times.get(ont + " ELK instance checking " + n)[r];
+                            }
+                            times.put(ont + " ELK instance checking " + n, instanceChecked);
                         }
                     }
                 }
             }
             writer.close();
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
 
             for (int ont=0; ont<2; ont++) {
                 int n = 0;
@@ -546,6 +564,60 @@ public class Main{
                 var seriesJFactICCPU = new XYSeries("JFact");
                 var seriesELKICCPU = new XYSeries("ELK");
 
+
+
+
+                var seriesHermitCons2 = new XYSeries("Hermit");
+                var seriesPelletCons2 = new XYSeries("Pellet");
+                var seriesJFactCons2 = new XYSeries("JFact");
+                var seriesELKCons2 = new XYSeries("ELK");
+                var seriesHermitSat2 = new XYSeries("Hermit");
+                var seriesPelletSat2 = new XYSeries("Pellet");
+                var seriesJFactSat2 = new XYSeries("JFact");
+                var seriesELKSat2 = new XYSeries("ELK");
+                var seriesHermitCla2 = new XYSeries("Hermit");
+                var seriesPelletCla2 = new XYSeries("Pellet");
+                var seriesJFactCla2 = new XYSeries("JFact");
+                var seriesELKCla2 = new XYSeries("ELK");
+                var seriesHermitIC2 = new XYSeries("Hermit");
+                var seriesPelletIC2 = new XYSeries("Pellet");
+                var seriesJFactIC2 = new XYSeries("JFact");
+                var seriesELKIC2 = new XYSeries("ELK");
+
+                var seriesHermitConsMemory2 = new XYSeries("Hermit");
+                var seriesPelletConsMemory2 = new XYSeries("Pellet");
+                var seriesJFactConsMemory2 = new XYSeries("JFact");
+                var seriesELKConsMemory2 = new XYSeries("ELK");
+                var seriesHermitSatMemory2 = new XYSeries("Hermit");
+                var seriesPelletSatMemory2 = new XYSeries("Pellet");
+                var seriesJFactSatMemory2 = new XYSeries("JFact");
+                var seriesELKSatMemory2 = new XYSeries("ELK");
+                var seriesHermitClaMemory2 = new XYSeries("Hermit");
+                var seriesPelletClaMemory2 = new XYSeries("Pellet");
+                var seriesJFactClaMemory2 = new XYSeries("JFact");
+                var seriesELKClaMemory2 = new XYSeries("ELK");
+                var seriesHermitICMemory2 = new XYSeries("Hermit");
+                var seriesPelletICMemory2 = new XYSeries("Pellet");
+                var seriesJFactICMemory2 = new XYSeries("JFact");
+                var seriesELKICMemory2 = new XYSeries("ELK");
+
+                var seriesHermitConsCPU2 = new XYSeries("Hermit");
+                var seriesPelletConsCPU2 = new XYSeries("Pellet");
+                var seriesJFactConsCPU2 = new XYSeries("JFact");
+                var seriesELKConsCPU2 = new XYSeries("ELK");
+                var seriesHermitSatCPU2 = new XYSeries("Hermit");
+                var seriesPelletSatCPU2 = new XYSeries("Pellet");
+                var seriesJFactSatCPU2 = new XYSeries("JFact");
+                var seriesELKSatCPU2 = new XYSeries("ELK");
+                var seriesHermitClaCPU2 = new XYSeries("Hermit");
+                var seriesPelletClaCPU2 = new XYSeries("Pellet");
+                var seriesJFactClaCPU2 = new XYSeries("JFact");
+                var seriesELKClaCPU2 = new XYSeries("ELK");
+                var seriesHermitICCPU2 = new XYSeries("Hermit");
+                var seriesPelletICCPU2 = new XYSeries("Pellet");
+                var seriesJFactICCPU2 = new XYSeries("JFact");
+                var seriesELKICCPU2 = new XYSeries("ELK");
+
                 for (int i=0; i<iterations; i++) {
                     n += step;
                     String title = null;
@@ -554,14 +626,13 @@ public class Main{
                             title = "KB";
                             break;
                         case 1:
-                            title = "TBOX";
+                            title = "TBox";
                             break;
                         case 2:
-                            title = "ABOX";
+                            title = "ABox";
                             break;
                     }
                     if (ont != 2){
-                        /*
                         satisfiable = times.get(ont + " HermiT satisfiable " + n);
                         seriesHermitSat.add(n, satisfiable[0]/reps);
                         seriesHermitSatMemory.add(n, (new BigDecimal(satisfiable[1] / reps)).setScale(2, RoundingMode.HALF_DOWN));
@@ -603,90 +674,143 @@ public class Main{
                         seriesELKClaMemory.add(n, (new BigDecimal(classified[1] / reps)).setScale(2, RoundingMode.HALF_DOWN));
                         seriesELKClaCPU.add(n, (new BigDecimal(classified[2] * 100 / reps)).setScale(2, RoundingMode.HALF_DOWN));
 
-                         */
-                        satisfiable = readData(br, n/step -1, reps, "Satisfiability " + title, "HermiT");
-                        seriesHermitSat.add(n, satisfiable[0]);
-                        seriesHermitSatMemory.add(n, (new BigDecimal(satisfiable[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesHermitSatCPU.add(n, (new BigDecimal(satisfiable[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
 
-                        satisfiable = readData(br, n/step -1, reps, "Satisfiability " + title, "Pellet");
-                        seriesPelletSat.add(n, satisfiable[0]);
-                        seriesPelletSatMemory.add(n, (new BigDecimal(satisfiable[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesPelletSatCPU.add(n, (new BigDecimal(satisfiable[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
 
-                        satisfiable = readData(br, n/step -1, reps, "Satisfiability " + title, "JFact");
-                        seriesJFactSat.add(n, satisfiable[0]);
-                        seriesJFactSatMemory.add(n, (new BigDecimal(satisfiable[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesJFactSatCPU.add(n, (new BigDecimal(satisfiable[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
 
-                        satisfiable = readData(br, n/step -1, reps, "Satisfiability " + title, "ELK");
-                        seriesELKSat.add(n, satisfiable[0]);
-                        seriesELKSatMemory.add(n, (new BigDecimal(satisfiable[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesELKSatCPU.add(n, (new BigDecimal(satisfiable[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
 
-                        classified = readData(br, n/step -1, reps, "Classify " + title, "HermiT");
-                        seriesHermitCla.add(n, classified[0]);
-                        seriesHermitClaMemory.add(n, (new BigDecimal(classified[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesHermitClaCPU.add(n, (new BigDecimal(classified[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+                        satisfiable = readData(file, n/step -1, reps, "Satisfiability " + title, "HermiT");
+                        seriesHermitSat2.add(n, satisfiable[0]);
+                        seriesHermitSatMemory2.add(n, (new BigDecimal(satisfiable[1])).setScale(2, RoundingMode.HALF_DOWN));
+                        seriesHermitSatCPU2.add(n, (new BigDecimal(satisfiable[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
 
-                        classified = readData(br, n/step -1, reps, "Classify " + title, "Pellet");
-                        seriesPelletCla.add(n, classified[0]);
-                        seriesPelletClaMemory.add(n, (new BigDecimal(classified[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesPelletClaCPU.add(n, (new BigDecimal(classified[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+                        satisfiable = readData(file, n/step -1, reps, "Satisfiability " + title, "Pellet");
+                        seriesPelletSat2.add(n, satisfiable[0]);
+                        seriesPelletSatMemory2.add(n, (new BigDecimal(satisfiable[1])).setScale(2, RoundingMode.HALF_DOWN));
+                        seriesPelletSatCPU2.add(n, (new BigDecimal(satisfiable[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
 
-                        classified = readData(br, n/step -1, reps, "Classify " + title, "JFact");
-                        seriesJFactCla.add(n, classified[0]);
-                        seriesJFactClaMemory.add(n, (new BigDecimal(classified[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesJFactClaCPU.add(n, (new BigDecimal(classified[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+                        satisfiable = readData(file, n/step -1, reps, "Satisfiability " + title, "JFact");
+                        seriesJFactSat2.add(n, satisfiable[0]);
+                        seriesJFactSatMemory2.add(n, (new BigDecimal(satisfiable[1])).setScale(2, RoundingMode.HALF_DOWN));
+                        seriesJFactSatCPU2.add(n, (new BigDecimal(satisfiable[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
 
-                        classified = readData(br, n/step -1, reps, "Classify " + title, "ELK");
-                        seriesELKCla.add(n, classified[0]);
-                        seriesELKClaMemory.add(n, (new BigDecimal(classified[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesELKClaCPU.add(n, (new BigDecimal(classified[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+                        satisfiable = readData(file, n/step -1, reps, "Satisfiability " + title, "ELK");
+                        seriesELKSat2.add(n, satisfiable[0]);
+                        seriesELKSatMemory2.add(n, (new BigDecimal(satisfiable[1])).setScale(2, RoundingMode.HALF_DOWN));
+                        seriesELKSatCPU2.add(n, (new BigDecimal(satisfiable[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                        classified = readData(file, n/step -1, reps, "Classify " + title, "HermiT");
+                        seriesHermitCla2.add(n, classified[0]);
+                        seriesHermitClaMemory2.add(n, (new BigDecimal(classified[1])).setScale(2, RoundingMode.HALF_DOWN));
+                        seriesHermitClaCPU2.add(n, (new BigDecimal(classified[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                        classified = readData(file, n/step -1, reps, "Classify " + title, "Pellet");
+                        seriesPelletCla2.add(n, classified[0]);
+                        seriesPelletClaMemory2.add(n, (new BigDecimal(classified[1])).setScale(2, RoundingMode.HALF_DOWN));
+                        seriesPelletClaCPU2.add(n, (new BigDecimal(classified[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                        classified = readData(file, n/step -1, reps, "Classify " + title, "JFact");
+                        seriesJFactCla2.add(n, classified[0]);
+                        seriesJFactClaMemory2.add(n, (new BigDecimal(classified[1])).setScale(2, RoundingMode.HALF_DOWN));
+                        seriesJFactClaCPU2.add(n, (new BigDecimal(classified[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                        classified = readData(file, n/step -1, reps, "Classify " + title, "ELK");
+                        seriesELKCla2.add(n, classified[0]);
+                        seriesELKClaMemory2.add(n, (new BigDecimal(classified[1])).setScale(2, RoundingMode.HALF_DOWN));
+                        seriesELKClaCPU2.add(n, (new BigDecimal(classified[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+                        if (ont == 0) {
+                            consistent = times.get(ont + " HermiT consistency " + n);
+                            seriesHermitCons.add(n, consistent[0] / reps);
+                            seriesHermitConsMemory.add(n, (new BigDecimal(consistent[1] / reps)).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesHermitConsCPU.add(n, (new BigDecimal(consistent[2] * 100 / reps)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            consistent = times.get(ont + " Pellet consistency " + n);
+                            seriesPelletCons.add(n, consistent[0] / reps);
+                            seriesPelletConsMemory.add(n, (new BigDecimal(consistent[1] / reps)).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesPelletConsCPU.add(n, (new BigDecimal(consistent[2] * 100 / reps)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            consistent = times.get(ont + " JFact consistency " + n);
+                            seriesJFactCons.add(n, consistent[0] / reps);
+                            seriesJFactConsMemory.add(n, (new BigDecimal(consistent[1] / reps)).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesJFactConsCPU.add(n, (new BigDecimal(consistent[2] * 100 / reps)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            consistent = times.get(ont + " ELK consistency " + n);
+                            seriesELKCons.add(n, consistent[0] / reps);
+                            seriesELKConsMemory.add(n, (new BigDecimal(consistent[1] / reps)).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesELKConsCPU.add(n, (new BigDecimal(consistent[2] * 100 / reps)).setScale(2, RoundingMode.HALF_DOWN));
+
+
+                            instanceChecked = times.get(ont + " HermiT instance checking " + n);
+                            seriesHermitIC.add(n, instanceChecked[0] / reps);
+                            seriesHermitICMemory.add(n, (new BigDecimal(instanceChecked[1] / reps)).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesHermitICCPU.add(n, (new BigDecimal(instanceChecked[2] * 100 / reps)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            instanceChecked = times.get(ont + " Pellet instance checking " + n);
+                            seriesPelletIC.add(n, instanceChecked[0] / reps);
+                            seriesPelletICMemory.add(n, (new BigDecimal(instanceChecked[1] / reps)).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesPelletICCPU.add(n, (new BigDecimal(instanceChecked[2] * 100 / reps)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            instanceChecked = times.get(ont + " JFact instance checking " + n);
+                            seriesJFactIC.add(n, instanceChecked[0] / reps);
+                            seriesJFactICMemory.add(n, (new BigDecimal(instanceChecked[1] / reps)).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesJFactICCPU.add(n, (new BigDecimal(instanceChecked[2] * 100 / reps)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            instanceChecked = times.get(ont + " ELK instance checking " + n);
+                            seriesELKIC.add(n, instanceChecked[0] / reps);
+                            seriesELKICMemory.add(n, (new BigDecimal(instanceChecked[1] / reps)).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesELKICCPU.add(n, (new BigDecimal(instanceChecked[2] * 100 / reps)).setScale(2, RoundingMode.HALF_DOWN));
+
+
+
+
+
+
+
+
+
+
+
+                            consistent = readData(file, n/step -1, reps, "Consistency", "HermiT");
+                            seriesHermitCons2.add(n, consistent[0]);
+                            seriesHermitConsMemory2.add(n, (new BigDecimal(consistent[1])).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesHermitConsCPU2.add(n, (new BigDecimal(consistent[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            consistent = readData(file, n/step -1, reps, "Consistency", "Pellet");
+                            seriesPelletCons2.add(n, consistent[0]);
+                            seriesPelletConsMemory2.add(n, (new BigDecimal(consistent[1])).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesPelletConsCPU2.add(n, (new BigDecimal(consistent[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            consistent = readData(file, n/step -1, reps, "Consistency", "JFact");
+                            seriesJFactCons2.add(n, consistent[0]);
+                            seriesJFactConsMemory2.add(n, (new BigDecimal(consistent[1])).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesJFactConsCPU2.add(n, (new BigDecimal(consistent[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            consistent = readData(file, n/step -1, reps, "Consistency", "ELK");
+                            seriesELKCons2.add(n, consistent[0]);
+                            seriesELKConsMemory2.add(n, (new BigDecimal(consistent[1])).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesELKConsCPU2.add(n, (new BigDecimal(consistent[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            instanceChecked = readData(file, n/step -1, reps, "Instance Checking", "HermiT");
+                            seriesHermitIC2.add(n, instanceChecked[0]);
+                            seriesHermitICMemory2.add(n, (new BigDecimal(instanceChecked[1])).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesHermitICCPU2.add(n, (new BigDecimal(instanceChecked[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            instanceChecked = readData(file, n/step -1, reps, "Instance Checking", "Pellet");
+                            seriesPelletIC2.add(n, instanceChecked[0]);
+                            seriesPelletICMemory2.add(n, (new BigDecimal(instanceChecked[1])).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesPelletICCPU2.add(n, (new BigDecimal(instanceChecked[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            instanceChecked = readData(file, n/step -1, reps, "Instance Checking", "JFact");
+                            seriesJFactIC2.add(n, instanceChecked[0]);
+                            seriesJFactICMemory2.add(n, (new BigDecimal(instanceChecked[1])).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesJFactICCPU2.add(n, (new BigDecimal(instanceChecked[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+
+                            instanceChecked = readData(file, n/step -1, reps, "Instance Checking", "ELK");
+                            seriesELKIC2.add(n, instanceChecked[0]);
+                            seriesELKICMemory2.add(n, (new BigDecimal(instanceChecked[1])).setScale(2, RoundingMode.HALF_DOWN));
+                            seriesELKICCPU2.add(n, (new BigDecimal(instanceChecked[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
+                        }
+
                     }
-
-                    if (ont == 0){
-                        consistent = readData(br, n/step -1, reps, "Consistency", "Hermit");
-                        seriesHermitCons.add(n, consistent[0]);
-                        seriesHermitConsMemory.add(n, (new BigDecimal(consistent[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesHermitConsCPU.add(n, (new BigDecimal(consistent[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
-
-                        consistent = readData(br, n/step -1, reps, "Consistency", "Pellet");
-                        seriesPelletCons.add(n, consistent[0]);
-                        seriesPelletConsMemory.add(n, (new BigDecimal(consistent[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesPelletConsCPU.add(n, (new BigDecimal(consistent[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
-
-                        consistent = readData(br, n/step -1, reps, "Consistency", "JFact");
-                        seriesJFactCons.add(n, consistent[0]);
-                        seriesJFactConsMemory.add(n, (new BigDecimal(consistent[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesJFactConsCPU.add(n, (new BigDecimal(consistent[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
-
-                        consistent = readData(br, n/step -1, reps, "Consistency", "ELK");
-                        seriesELKCons.add(n, consistent[0]);
-                        seriesELKConsMemory.add(n, (new BigDecimal(consistent[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesELKConsCPU.add(n, (new BigDecimal(consistent[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
-
-                        instanceChecked = readData(br, n/step -1, reps, "Instance Checking", "HermiT");
-                        seriesHermitIC.add(n, instanceChecked[0]);
-                        seriesHermitICMemory.add(n, (new BigDecimal(instanceChecked[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesHermitICCPU.add(n, (new BigDecimal(instanceChecked[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
-
-                        instanceChecked = readData(br, n/step -1, reps, "Instance Checking", "Pellet");
-                        seriesPelletIC.add(n, instanceChecked[0]);
-                        seriesPelletICMemory.add(n, (new BigDecimal(instanceChecked[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesPelletICCPU.add(n, (new BigDecimal(instanceChecked[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
-
-                        instanceChecked = readData(br, n/step -1, reps, "Instance Checking", "JFact");
-                        seriesJFactIC.add(n, instanceChecked[0]);
-                        seriesJFactICMemory.add(n, (new BigDecimal(instanceChecked[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesJFactICCPU.add(n, (new BigDecimal(instanceChecked[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
-
-                        instanceChecked = readData(br, n/step -1, reps, "Instance Checking", "ELK");
-                        seriesELKIC.add(n, instanceChecked[0]);
-                        seriesELKICMemory.add(n, (new BigDecimal(instanceChecked[1])).setScale(2, RoundingMode.HALF_DOWN));
-                        seriesELKICCPU.add(n, (new BigDecimal(instanceChecked[2] * 100)).setScale(2, RoundingMode.HALF_DOWN));
-                    }
-
                 }
                 String title = null;
                 switch (ont){
@@ -719,10 +843,38 @@ public class Main{
                     datasetSatCPU.addSeries(seriesELKSatCPU);
                     JFreeChart chartSat = createChart(datasetSat, "Satisfiability " + title, "Time (milliseconds)");
                     ChartUtilities.saveChartAsPNG(new File("Satisfiability" + title + ".png"), chartSat, 450, 400);
-                    JFreeChart chartSatMemory = createChart(datasetSatMemory, "Satisfiability Memory " + title, "Memory (GB)");
+                    JFreeChart chartSatMemory = createChart(datasetSatMemory, "Satisfiability Memory " + title, "Memory (%)");
                     ChartUtilities.saveChartAsPNG(new File("SatisfiabilityMemory" + title + ".png"), chartSatMemory, 450, 400);
                     JFreeChart chartSatCPU = createChart(datasetSatCPU, "Satisfiability CPU " + title, "CPU (%)");
                     ChartUtilities.saveChartAsPNG(new File("SatisfiabilityCPU" + title + ".png"), chartSatCPU, 450, 400);
+
+
+
+
+
+
+
+                    var datasetSat2 = new XYSeriesCollection();
+                    datasetSat2.addSeries(seriesHermitSat2);
+                    datasetSat2.addSeries(seriesPelletSat2);
+                    datasetSat2.addSeries(seriesJFactSat2);
+                    datasetSat2.addSeries(seriesELKSat2);
+                    var datasetSatMemory2 = new XYSeriesCollection();
+                    datasetSatMemory2.addSeries(seriesHermitSatMemory2);
+                    datasetSatMemory2.addSeries(seriesPelletSatMemory2);
+                    datasetSatMemory2.addSeries(seriesJFactSatMemory2);
+                    datasetSatMemory2.addSeries(seriesELKSatMemory2);
+                    var datasetSatCPU2 = new XYSeriesCollection();
+                    datasetSatCPU2.addSeries(seriesHermitSatCPU2);
+                    datasetSatCPU2.addSeries(seriesPelletSatCPU2);
+                    datasetSatCPU2.addSeries(seriesJFactSatCPU2);
+                    datasetSatCPU2.addSeries(seriesELKSatCPU2);
+                    JFreeChart chartSat2 = createChart(datasetSat2, "Satisfiability " + title, "Time (milliseconds)");
+                    ChartUtilities.saveChartAsPNG(new File("Satisfiability" + title + "2.png"), chartSat2, 450, 400);
+                    JFreeChart chartSatMemory2 = createChart(datasetSatMemory2, "Satisfiability Memory " + title, "Memory (%)");
+                    ChartUtilities.saveChartAsPNG(new File("SatisfiabilityMemory" + title + "2.png"), chartSatMemory2, 450, 400);
+                    JFreeChart chartSatCPU2 = createChart(datasetSatCPU2, "Satisfiability CPU " + title, "CPU (%)");
+                    ChartUtilities.saveChartAsPNG(new File("SatisfiabilityCPU" + title + "2.png"), chartSatCPU2, 450, 400);
 
                     var datasetCla = new XYSeriesCollection();
                     datasetCla.addSeries(seriesHermitCla);
@@ -741,10 +893,36 @@ public class Main{
                     datasetClaCPU.addSeries(seriesELKClaCPU);
                     JFreeChart chartCla = createChart(datasetCla, "Classify " + title, "Time (milliseconds)");
                     ChartUtilities.saveChartAsPNG(new File("Classify" + title + ".png"), chartCla, 450, 400);
-                    JFreeChart chartClaMemory = createChart(datasetClaMemory, "Classify Memory " + title, "Memory (GB)");
+                    JFreeChart chartClaMemory = createChart(datasetClaMemory, "Classify Memory " + title, "Memory (%)");
                     ChartUtilities.saveChartAsPNG(new File("ClassifyMemory" + title + ".png"), chartClaMemory, 450, 400);
                     JFreeChart chartClaCPU = createChart(datasetClaCPU, "Classify CPU " + title, "CPU (%)");
                     ChartUtilities.saveChartAsPNG(new File("ClassifyCPU" + title + ".png"), chartClaCPU, 450, 400);
+
+
+
+
+
+                    var datasetCla2 = new XYSeriesCollection();
+                    datasetCla2.addSeries(seriesHermitCla2);
+                    datasetCla2.addSeries(seriesPelletCla2);
+                    datasetCla2.addSeries(seriesJFactCla2);
+                    datasetCla2.addSeries(seriesELKCla2);
+                    var datasetClaMemory2 = new XYSeriesCollection();
+                    datasetClaMemory2.addSeries(seriesHermitClaMemory2);
+                    datasetClaMemory2.addSeries(seriesPelletClaMemory2);
+                    datasetClaMemory2.addSeries(seriesJFactClaMemory2);
+                    datasetClaMemory2.addSeries(seriesELKClaMemory2);
+                    var datasetClaCPU2 = new XYSeriesCollection();
+                    datasetClaCPU2.addSeries(seriesHermitClaCPU2);
+                    datasetClaCPU2.addSeries(seriesPelletClaCPU2);
+                    datasetClaCPU2.addSeries(seriesJFactClaCPU2);
+                    datasetClaCPU2.addSeries(seriesELKClaCPU2);
+                    JFreeChart chartCla2 = createChart(datasetCla2, "Classify " + title, "Time (milliseconds)");
+                    ChartUtilities.saveChartAsPNG(new File("Classify" + title + "2.png"), chartCla2, 450, 400);
+                    JFreeChart chartClaMemory2 = createChart(datasetClaMemory2, "Classify Memory " + title, "Memory (%)");
+                    ChartUtilities.saveChartAsPNG(new File("ClassifyMemory" + title + "2.png"), chartClaMemory2, 450, 400);
+                    JFreeChart chartClaCPU2 = createChart(datasetClaCPU2, "Classify CPU " + title, "CPU (%)");
+                    ChartUtilities.saveChartAsPNG(new File("ClassifyCPU" + title + "2.png"), chartClaCPU2, 450, 400);
                 }
 
                 if (ont == 0){
@@ -765,10 +943,43 @@ public class Main{
                     datasetConsCPU.addSeries(seriesELKConsCPU);
                     JFreeChart chartCons = createChart(datasetCons, "Consistency " + title, "Time (microseconds)");
                     ChartUtilities.saveChartAsPNG(new File("Consistency" + title + ".png"), chartCons, 450, 400);
-                    JFreeChart chartConsMemory = createChart(datasetConsMemory, "Consistency Memory " + title, "Memory (GB)");
+                    JFreeChart chartConsMemory = createChart(datasetConsMemory, "Consistency Memory " + title, "Memory (%)");
                     ChartUtilities.saveChartAsPNG(new File("ConsistencyMemory" + title + ".png"), chartConsMemory, 450, 400);
                     JFreeChart chartConsCPU = createChart(datasetConsCPU, "Consistency CPU " + title, "CPU (%)");
                     ChartUtilities.saveChartAsPNG(new File("ConsistencyCPU" + title + ".png"), chartConsCPU, 450, 400);
+
+
+
+
+
+
+
+
+                    var datasetCons2 = new XYSeriesCollection();
+                    datasetCons2.addSeries(seriesHermitCons2);
+                    datasetCons2.addSeries(seriesPelletCons2);
+                    datasetCons2.addSeries(seriesJFactCons2);
+                    datasetCons2.addSeries(seriesELKCons2);
+                    var datasetConsMemory2 = new XYSeriesCollection();
+                    datasetConsMemory2.addSeries(seriesHermitConsMemory2);
+                    datasetConsMemory2.addSeries(seriesPelletConsMemory2);
+                    datasetConsMemory2.addSeries(seriesJFactConsMemory2);
+                    datasetConsMemory2.addSeries(seriesELKConsMemory2);
+                    var datasetConsCPU2 = new XYSeriesCollection();
+                    datasetConsCPU2.addSeries(seriesHermitConsCPU2);
+                    datasetConsCPU2.addSeries(seriesPelletConsCPU2);
+                    datasetConsCPU2.addSeries(seriesJFactConsCPU2);
+                    datasetConsCPU2.addSeries(seriesELKConsCPU2);
+                    JFreeChart chartCons2 = createChart(datasetCons2, "Consistency " + title, "Time (microseconds)");
+                    ChartUtilities.saveChartAsPNG(new File("Consistency" + title + "2.png"), chartCons2, 450, 400);
+                    JFreeChart chartConsMemory2 = createChart(datasetConsMemory2, "Consistency Memory " + title, "Memory (%)");
+                    ChartUtilities.saveChartAsPNG(new File("ConsistencyMemory" + title + "2.png"), chartConsMemory2, 450, 400);
+                    JFreeChart chartConsCPU2 = createChart(datasetConsCPU2, "Consistency CPU " + title, "CPU (%)");
+                    ChartUtilities.saveChartAsPNG(new File("ConsistencyCPU" + title + "2.png"), chartConsCPU2, 450, 400);
+
+
+
+
 
                     var datasetIC = new XYSeriesCollection();
                     datasetIC.addSeries(seriesHermitIC);
@@ -787,11 +998,33 @@ public class Main{
                     datasetICCPU.addSeries(seriesELKICCPU);
                     JFreeChart chartIC = createChart(datasetIC, "Instance checking " + title, "Time (milliseconds)");
                     ChartUtilities.saveChartAsPNG(new File("InstanceChecking" + title + ".png"), chartIC, 450, 400);
-                    JFreeChart chartICMemory = createChart(datasetICMemory, "Instance checking Memory " + title, "Memory (GB)");
+                    JFreeChart chartICMemory = createChart(datasetICMemory, "Instance checking Memory " + title, "Memory (%)");
                     ChartUtilities.saveChartAsPNG(new File("InstanceCheckingMemory" + title + ".png"), chartICMemory, 450, 400);
                     JFreeChart chartICCPU = createChart(datasetICCPU, "Instance checking CPU " + title, "CPU (%)");
                     ChartUtilities.saveChartAsPNG(new File("InstanceCheckingCPU" + title + ".png"), chartICCPU, 450, 400);
 
+
+                    var datasetIC2 = new XYSeriesCollection();
+                    datasetIC2.addSeries(seriesHermitIC2);
+                    datasetIC2.addSeries(seriesPelletIC2);
+                    datasetIC2.addSeries(seriesJFactIC2);
+                    datasetIC2.addSeries(seriesELKIC2);
+                    var datasetICMemory2 = new XYSeriesCollection();
+                    datasetICMemory2.addSeries(seriesHermitICMemory2);
+                    datasetICMemory2.addSeries(seriesPelletICMemory2);
+                    datasetICMemory2.addSeries(seriesJFactICMemory2);
+                    datasetICMemory2.addSeries(seriesELKICMemory2);
+                    var datasetICCPU2 = new XYSeriesCollection();
+                    datasetICCPU2.addSeries(seriesHermitICCPU2);
+                    datasetICCPU2.addSeries(seriesPelletICCPU2);
+                    datasetICCPU2.addSeries(seriesJFactICCPU2);
+                    datasetICCPU2.addSeries(seriesELKICCPU2);
+                    JFreeChart chartIC2 = createChart(datasetIC2, "Instance checking " + title, "Time (milliseconds)");
+                    ChartUtilities.saveChartAsPNG(new File("InstanceChecking" + title + "2.png"), chartIC2, 450, 400);
+                    JFreeChart chartICMemory2 = createChart(datasetICMemory2, "Instance checking Memory " + title, "Memory (%)");
+                    ChartUtilities.saveChartAsPNG(new File("InstanceCheckingMemory" + title + "2.png"), chartICMemory2, 450, 400);
+                    JFreeChart chartICCPU2 = createChart(datasetICCPU2, "Instance checking CPU " + title, "CPU (%)");
+                    ChartUtilities.saveChartAsPNG(new File("InstanceCheckingCPU" + title + "2.png"), chartICCPU2, 450, 400);
 
                 }
             }
