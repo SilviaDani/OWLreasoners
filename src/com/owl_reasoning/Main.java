@@ -21,6 +21,8 @@ import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.formats.OWLXMLDocumentFormat;
+import org.semanticweb.owlapi.formats.RDFDocumentFormat;
+import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.io.OWLXMLOntologyFormat;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -107,6 +109,7 @@ public class Main{
             ontologyManager.applyChange(addAxiom);
         }
 
+        /*
         for (int i=0; i<Math.floor(m/5); i++) {
             OWLObjectProperty op = df.getOWLObjectProperty(IRI.create("#Property " + i));
             OWLAxiom declare = df.getOWLDeclarationAxiom(op);
@@ -125,13 +128,15 @@ public class Main{
             AddAxiom addAxiom = new AddAxiom(o, axiom);
             ontologyManager.applyChange(addAxiom);
         }
-        File file = new File("ontology" + n + "rep" + rep + ".owl");
-        OWLDocumentFormat format = ontologyManager.getOntologyFormat(o);
-        OWLXMLDocumentFormat owlxmlFormat = new OWLXMLDocumentFormat();
+
+         */
+        File file = new File("ontology" + n + "rep" + rep + ".rdf");
+        RDFDocumentFormat format = (RDFDocumentFormat) ontologyManager.getOntologyFormat(o);
+        RDFXMLDocumentFormat rdfxmlFormat = new RDFXMLDocumentFormat();
         if (format.isPrefixOWLDocumentFormat()) {
-            owlxmlFormat.copyPrefixesFrom(format.asPrefixOWLDocumentFormat());
+            rdfxmlFormat.copyPrefixesFrom(format.asPrefixOWLDocumentFormat());
         }
-        ontologyManager.saveOntology(o, owlxmlFormat, IRI.create(file.toURI()));
+        ontologyManager.saveOntology(o, rdfxmlFormat, IRI.create(file.toURI()));
         return o;
     }
 
